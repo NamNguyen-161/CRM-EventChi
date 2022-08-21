@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   padding: 46px;
 `;
 
-export const Login = styled.div`
+export const TextLogin = styled.div`
   font-weight: 700;
   font-size: 28px;
   line-height: 36px;

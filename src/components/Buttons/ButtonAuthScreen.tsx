@@ -1,4 +1,4 @@
-import { Button, styled, Typography } from "@mui/material";
+import { Button, ButtonProps, styled, Typography } from "@mui/material";
 import React, { memo } from "react";
 
 const TypographyStyle = styled(Typography)(
@@ -18,7 +18,7 @@ const ButtonStyle = styled(Button)(
   `
 );
 
-export interface IButtonAuthScreenProps {
+export interface IButtonAuthScreenProps extends ButtonProps {
   children?: React.ReactNode;
   action?: () => void;
   btnStyle?: React.CSSProperties;
@@ -26,9 +26,9 @@ export interface IButtonAuthScreenProps {
 }
 
 const ButtonAuth = (props: IButtonAuthScreenProps) => {
-  const { action, children, btnStyle, textStyle } = props;
+  const { action, children, btnStyle, textStyle, ...buttonProps } = props;
   return (
-    <ButtonStyle variant="contained" style={btnStyle}>
+    <ButtonStyle variant="contained" style={btnStyle} {...buttonProps}>
       <TypographyStyle style={textStyle}>{children}</TypographyStyle>
     </ButtonStyle>
   );

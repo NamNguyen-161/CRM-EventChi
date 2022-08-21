@@ -14,7 +14,7 @@ export const ContainerLayout = styled.div`
   height: 100%;
 
   @media (max-width: 1440px) {
-    width: 100vh;
+    width: 100vw;
   }
 
   @media (min-width: 1441px) {

@@ -1,9 +1,15 @@
+import AuthContainer from "@/containers/Auth";
+import AuthLayout from "@/layouts/Auth";
 import React, { memo } from "react";
 
 export interface IAuthScreenProps {}
 
 const AuthScreen = (props: IAuthScreenProps) => {
-  return <div>AuthScreen</div>;
+  return (
+    <AuthLayout>
+      <AuthContainer />
+    </AuthLayout>
+  );
 };
 
 const Auth = memo(AuthScreen);

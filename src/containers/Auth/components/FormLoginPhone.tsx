@@ -6,17 +6,21 @@ import { countries, CountryType, ILoginForm, schemaLogin } from "./type";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomCheckbox from "@/components/Checkbox/Checkbox";
 import { SpaceVertical } from "@/styles/styled";
+import ButtonAuthScreen from "@/components/Buttons/ButtonAuthScreen";
 
 export interface IFormLoginPhoneProps {}
 
 const Login = (props: IFormLoginPhoneProps) => {
-  const { handleSubmit, control, watch } = useForm<ILoginForm>({
+  const { handleSubmit, control } = useForm<ILoginForm>({
     resolver: yupResolver(schemaLogin),
+    defaultValues: {
+      country: null,
+      phone: "",
+      remember: false,
+    },
   });
 
   const onSubmit = (data: ILoginForm) => console.log("Submit:", data);
-
-  console.log("Autocomplete:", watch("country"));
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -26,7 +30,7 @@ const Login = (props: IFormLoginPhoneProps) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <Autocomplete
-              value={value ?? null}
+              value={value}
               onChange={(event: any, newValue: CountryType | null) => {
                 onChange(newValue);
               }}
@@ -39,6 +43,7 @@ const Login = (props: IFormLoginPhoneProps) => {
               isOptionEqualToValue={(option, value) =>
                 option.countryCode === value.countryCode
               }
+              ListboxProps={{ style: { maxHeight: "300px" } }}
               PaperComponent={({ children }) => (
                 <Paper
                   style={{
@@ -67,22 +72,31 @@ const Login = (props: IFormLoginPhoneProps) => {
           )}
         />
         <Controller
-          render={({ field: { value, onChange, ref } }) => (
+          name="phone"
+          control={control}
+          render={({ field: { value, onChange } }) => (
             <TextField
               value={value}
               onChange={onChange}
-              inputRef={ref}
               variant="filled"
               InputProps={{ disableUnderline: true }}
               label="Phone number"
             />
           )}
-          name="phone"
-          control={control}
         />
       </Wrapper>
       <SpaceVertical height={20} />
-      <CustomCheckbox />
+      <Controller
+        name="remember"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <CustomCheckbox checked={value} onChange={onChange} />
+        )}
+      />
+      <SpaceVertical height={27} />
+      <ButtonAuthScreen btnStyle={{ minWidth: "183px" }} type="submit">
+        Login
+      </ButtonAuthScreen>
     </form>
   );
 };

@@ -12,6 +12,14 @@ const GlobalStyle = createGlobalStyle`
         font-family: Lato, sans-serif;
         color: white;
     }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+    transition-delay: background-color 5000s, color 5000s;
+    }
 `;
 
 export default GlobalStyle;

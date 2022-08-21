@@ -1,8 +1,9 @@
 import * as Yup from "yup";
 
 export interface ILoginForm {
-  country: CountryType;
+  country: CountryType | null;
   phone: string;
+  remember: boolean;
 }
 
 export const schemaLogin = Yup.object({
@@ -13,6 +14,7 @@ export const schemaLogin = Yup.object({
     countryCode: Yup.string().required(),
   }).required(),
   phone: Yup.string().required(),
+  remember: Yup.boolean().required().default(false),
 }).required();
 
 export interface CountryType {

@@ -1,4 +1,9 @@
-import { Checkbox, FormControlLabel, styled } from "@mui/material";
+import {
+  Checkbox,
+  CheckboxProps,
+  FormControlLabel,
+  styled,
+} from "@mui/material";
 import React, { memo } from "react";
 
 const CustomFormLabel = styled(FormControlLabel)(({ theme }) => ({
@@ -13,13 +18,14 @@ const CustomFormLabel = styled(FormControlLabel)(({ theme }) => ({
   },
 }));
 
-export interface IPassCodeProps {}
+export interface IPassCodeProps extends CheckboxProps {}
 
 const CheckboxStyle = (props: IPassCodeProps) => {
+  const { ...checkboxProps } = props;
   return (
     <CustomFormLabel
       value="end"
-      control={<Checkbox color="primary" />}
+      control={<Checkbox color="primary" {...checkboxProps} />}
       label="Remember me"
     />
   );

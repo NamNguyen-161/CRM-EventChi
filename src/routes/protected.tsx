@@ -1,12 +1,9 @@
 import { ROUTE_CONFIG } from "@/constants/routes";
+import { IChildren } from "@/utils/types";
 import React, { FC, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
-type Props = {
-  children?: React.ReactNode;
-};
-
-const ProtectedRoute: FC<Props> = ({ children }) => {
+const ProtectedRoute: FC<IChildren> = ({ children }) => {
   const navigation = useNavigate();
   const [isLogin, setIdLogin] = useState<boolean>(true);
 

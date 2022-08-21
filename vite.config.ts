@@ -7,7 +7,9 @@ export default ({ mode }) => {
 
   return defineConfig({
     plugins: [react()],
-
+    esbuild: {
+      logOverride: { "this-is-undefined-in-esm": "silent" },
+    },
     server: {
       port: +process.env.VITE_APP_PORT,
     },

@@ -15,7 +15,7 @@ import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
 import { ILoginWithPassCode } from "@/apis/auth/types";
 import { onError } from "@/utils/apiHelper";
 import { AxiosResponse } from "axios";
-import { storeToken } from "@/utils/localstorageService";
+import { storeToken } from "@/utils/localStorageService";
 
 export interface IAuthContainerProps {}
 

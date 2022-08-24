@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/utils/localstorageService";
+import { getAccessToken } from "@/utils/localStorageService";
 import axios, { AxiosRequestConfig } from "axios";
 import { refreshTokenFn } from "./auth/authApi";
 

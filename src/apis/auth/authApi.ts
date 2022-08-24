@@ -1,6 +1,6 @@
 import { getApi, postApi } from "@/utils/apiHelper";
 import { makeFormData } from "@/utils/helper";
-import { getRefreshToken, storeToken } from "@/utils/localstorageService";
+import { getRefreshToken, storeToken } from "@/utils/localStorageService";
 import httpRequest from "../httpRequest";
 import { ILoginWithPassCode, ITokenResponse } from "./types";
 

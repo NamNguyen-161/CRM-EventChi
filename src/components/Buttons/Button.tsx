@@ -34,5 +34,5 @@ const ButtonAuth = (props: IButtonAuthScreenProps) => {
   );
 };
 
-const ButtonAuthScreen = memo(ButtonAuth);
-export default ButtonAuthScreen;
+const ButtonComponent = memo(ButtonAuth);
+export default ButtonComponent;

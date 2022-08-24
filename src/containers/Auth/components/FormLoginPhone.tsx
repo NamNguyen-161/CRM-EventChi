@@ -11,8 +11,9 @@ import { countries, CountryType, EStepLogin, ILoginPhone } from "./type";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomCheckbox from "@/components/Checkbox/Checkbox";
 import { SpaceVertical } from "@/styles/styled";
-import ButtonAuthScreen from "@/components/Buttons/ButtonAuthScreen";
+import ButtonComponent from "@/components/Buttons/Button";
 import { DIRECTION } from "../types";
+import { MAX_HEIGHT_SELECT } from "@/utils/types";
 
 export interface IFormLoginPhoneProps {
   onChangeStep: (step: EStepLogin, direction: DIRECTION) => void;
@@ -48,7 +49,7 @@ const Login = (props: IFormLoginPhoneProps) => {
               isOptionEqualToValue={(option, value) =>
                 option.countryCode === value.countryCode
               }
-              ListboxProps={{ style: { maxHeight: "300px" } }}
+              ListboxProps={{ style: { maxHeight: MAX_HEIGHT_SELECT } }}
               PaperComponent={({ children }) => (
                 <Paper
                   style={{
@@ -99,9 +100,9 @@ const Login = (props: IFormLoginPhoneProps) => {
         )}
       />
       <SpaceVertical height={27} />
-      <ButtonAuthScreen btnStyle={{ minWidth: "183px" }} type="submit">
+      <ButtonComponent btnStyle={{ minWidth: "183px" }} type="submit">
         Login
-      </ButtonAuthScreen>
+      </ButtonComponent>
     </form>
   );
 };

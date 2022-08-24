@@ -1,4 +1,3 @@
-import ButtonAuthScreen from "@/components/Buttons/ButtonAuthScreen";
 import { SpaceVertical } from "@/styles/styled";
 import { Box, Stack } from "@mui/material";
 import React, { memo } from "react";

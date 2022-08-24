@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { EStepLogin, ILoginForm, schemaLogin } from "./components/type";
 import { Wrapper } from "./styled";
 import PhoneLogin from "./PhoneLogin/PhoneLogin";
@@ -9,6 +9,13 @@ import OTPLogin from "./OTPLogin/OtpLogin";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ChooseRole from "./Roles/chooseRole";
+import { useMutation } from "@tanstack/react-query";
+import { fetchAccessTokenFn, loginWithPhoneFn } from "@/apis/auth/authApi";
+import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
+import { ILoginWithPassCode } from "@/apis/auth/types";
+import { onError } from "@/utils/apiHelper";
+import { AxiosResponse } from "axios";
+import { storeToken } from "@/utils/localstorageService";
 
 export interface IAuthContainerProps {}
 
@@ -30,6 +37,30 @@ export default function AuthContainer(props: IAuthContainerProps) {
   const refLoginOTP = useRef(null);
   const refLoginRole = useRef(null);
 
+  // api
+  const {
+    mutate: loginWithPhone,
+    isLoading: phoneLoading,
+    data: userId,
+  } = useMutation((data: string) => loginWithPhoneFn(data), {
+    onSuccess: () => {
+      onChangeStep(EStepLogin.OTP, "left");
+    },
+    onError,
+  });
+  console.log({ userId });
+  const { mutate: loginWithPassCode, isLoading: passCodeLoading } = useMutation(
+    (data: ILoginWithPassCode) => fetchAccessTokenFn(data),
+    {
+      onSuccess: (data) => {
+        storeToken(data);
+        onChangeStep(EStepLogin.ROLE, "left");
+      },
+      onError,
+    }
+  );
+
+  //handle logic
   const onChangeStep = (step: EStepLogin, direction: DIRECTION) => {
     setStep(step);
     setDirection(direction);
@@ -37,18 +68,24 @@ export default function AuthContainer(props: IAuthContainerProps) {
 
   const onLoginPhone = () => {
     const { passCode, ...rest } = methods.getValues();
-    console.log({ ...rest });
-    onChangeStep(EStepLogin.OTP, "left");
+    const { country, phone } = rest;
+    const phoneNumber = `+${country?.code}${phone}`;
+    loginWithPhone(phoneNumber);
   };
 
   const onLoginPassCode = () => {
     const { passCode } = methods.getValues();
-    onChangeStep(EStepLogin.ROLE, "left");
-    console.log({ passCode });
+    const _passCode = passCode.join("");
+    const data = {
+      userId: userId as AxiosResponse<string, any>,
+      passCode: _passCode,
+    };
+    loginWithPassCode(data);
   };
 
   return (
     <Wrapper>
+      {(phoneLoading || passCodeLoading) && <LoadingIndicator />}
       <FormProvider {...methods}>
         <CSSTransition
           nodeRef={refLoginPhone}

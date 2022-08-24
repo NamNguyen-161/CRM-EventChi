@@ -41,6 +41,27 @@ const theme = createTheme({
         },
       },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          color: "rgba(0, 0, 0, 0.87)",
+          select: {
+            "&:focus": {
+              background: "#ff0000",
+            },
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          "&:focus": {
+            background: "rgba(17, 17, 17, 0.05)",
+          },
+        },
+      },
+    },
   },
 });
 

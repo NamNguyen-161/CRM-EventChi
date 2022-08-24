@@ -1,32 +1,47 @@
-import axios from "axios";
+import { getAccessToken } from "@/utils/localstorageService";
+import axios, { AxiosRequestConfig } from "axios";
+import { refreshTokenFn } from "./auth/authApi";
 
 const httpRequest = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  headers: { "Content-type": "application/json" },
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Add a request interceptor
 httpRequest.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
-    return config;
+    requestHandler(config);
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
+const requestHandler = (config: AxiosRequestConfig) => {
+  const accessToken = getAccessToken();
+  if (config.headers) {
+    config.headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+  return config;
+};
+
 httpRequest.interceptors.response.use(
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response.data;
+  (response) => {
+    return response;
   },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  async function (error) {
+    const originalRequest = error.config;
+    if (
+      (error.response.status === 403 || error.response.status === 401) &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      const access_token = await refreshTokenFn();
+      axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+      return httpRequest(originalRequest);
+    }
     return Promise.reject(error);
   }
 );

@@ -9,6 +9,7 @@ import { persistor, store } from "./store/configureStore";
 import NavigationApp from "./routes";
 import GlobalStyle from "./styles/globalStyle";
 import theme from "./styles/ThemeProvider";
+import "./styles/app.scss";
 
 function App() {
   const queryClient = new QueryClient();

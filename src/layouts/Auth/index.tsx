@@ -20,7 +20,11 @@ const Auth: FC<IChildren> = ({ children }) => {
         <div className="main">
           <div className="main__header">
             <div>
-              <img src={IconEvenChiLogin} />
+              <img
+                className="pointer"
+                src={IconEvenChiLogin}
+                onClick={() => window.location.reload()}
+              />
             </div>
             <Stack
               direction="row"

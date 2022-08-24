@@ -1,26 +1,31 @@
 import { Autocomplete, Paper, TextField } from "@mui/material";
-import React, { memo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { memo, useEffect } from "react";
+import {
+  Controller,
+  useForm,
+  useFormContext,
+  UseFormHandleSubmit,
+} from "react-hook-form";
 import { Wrapper } from "./styled";
-import { countries, CountryType, ILoginForm, schemaLogin } from "./type";
+import { countries, CountryType, EStepLogin, ILoginPhone } from "./type";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CustomCheckbox from "@/components/Checkbox/Checkbox";
 import { SpaceVertical } from "@/styles/styled";
 import ButtonAuthScreen from "@/components/Buttons/ButtonAuthScreen";
+import { DIRECTION } from "../types";
 
-export interface IFormLoginPhoneProps {}
+export interface IFormLoginPhoneProps {
+  onChangeStep: (step: EStepLogin, direction: DIRECTION) => void;
+  onLoginPhone: () => void;
+}
 
 const Login = (props: IFormLoginPhoneProps) => {
-  const { handleSubmit, control } = useForm<ILoginForm>({
-    resolver: yupResolver(schemaLogin),
-    defaultValues: {
-      country: null,
-      phone: "",
-      remember: false,
-    },
-  });
+  const { onChangeStep, onLoginPhone } = props;
+  const { handleSubmit, control } = useFormContext<ILoginPhone>();
 
-  const onSubmit = (data: ILoginForm) => console.log("Submit:", data);
+  const onSubmit = (data: ILoginPhone) => {
+    onLoginPhone();
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -55,7 +60,7 @@ const Login = (props: IFormLoginPhoneProps) => {
               )}
               renderOption={(props, option) => {
                 return (
-                  <li {...props} key={option.countryCode}>
+                  <li {...props} key={option.name}>
                     {option.code ? "+" + option.code : ""}
                   </li>
                 );

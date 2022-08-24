@@ -2,15 +2,21 @@ import ButtonAuthScreen from "@/components/Buttons/ButtonAuthScreen";
 import { SpaceVertical } from "@/styles/styled";
 import { Box, Stack } from "@mui/material";
 import React, { memo } from "react";
-import FormLogin from "./components/FormLoginPhone";
-import { Description, TextLogin } from "./styled";
+import FormLogin from "../components/FormLoginPhone";
+import { EStepLogin } from "../components/type";
+import { Description, TextLogin, WrapperAbsolute } from "../styled";
+import { DIRECTION } from "../types";
 import IconLockOpen from "/ic_lockOpen.svg";
 
-export interface ILoginByPhoneProps {}
+export interface IPhoneLoginProps {
+  onChangeStep: (step: EStepLogin, direction: DIRECTION) => void;
+  onLoginPhone: () => void;
+}
+export default function PhoneLogin(props: IPhoneLoginProps) {
+  const { onChangeStep, onLoginPhone } = props;
 
-const LoginByPhone = (props: ILoginByPhoneProps) => {
   return (
-    <React.Fragment>
+    <WrapperAbsolute>
       <Stack spacing={1}>
         <TextLogin>log in</TextLogin>
         <Description>
@@ -18,14 +24,11 @@ const LoginByPhone = (props: ILoginByPhoneProps) => {
         </Description>
       </Stack>
       <SpaceVertical height={40} />
-      <FormLogin />
+      <FormLogin onChangeStep={onChangeStep} onLoginPhone={onLoginPhone} />
       <SpaceVertical height={40} />
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <img src={IconLockOpen} />
       </Box>
-    </React.Fragment>
+    </WrapperAbsolute>
   );
-};
-
-const PhoneLogin = memo(LoginByPhone);
-export default PhoneLogin;
+}

@@ -1,10 +1,22 @@
 import * as Yup from "yup";
 
-export interface ILoginForm {
+export enum EStepLogin {
+  PHONE_NUMBER = "PHONE_NUMBER",
+  OTP = "OTP",
+  ROLE = "ROLE",
+}
+
+export interface ILoginPhone {
   country: CountryType | null;
   phone: string;
   remember: boolean;
 }
+
+export interface ILoginOTP {
+  passCode: Array<string>;
+}
+
+export interface ILoginForm extends ILoginPhone, ILoginOTP {}
 
 export const schemaLogin = Yup.object({
   country: Yup.object({

@@ -1,10 +1,24 @@
 import styled from "styled-components";
 
+const HEIGH_FORM_LOGIN = 600;
+const WIDTH_FORM_LOGIN = 480;
+
 export const Wrapper = styled.div`
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(4px);
   border-radius: 8px;
-  padding: 46px;
+  overflow: hidden;
+  width: ${WIDTH_FORM_LOGIN}px;
+  height: ${HEIGH_FORM_LOGIN}px;
+  position: relative;
+`;
+
+export const WrapperAbsolute = styled.div`
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
 `;
 
 export const TextLogin = styled.div`

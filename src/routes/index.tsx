@@ -9,6 +9,7 @@ const DashboardScreen = lazy(() => import("@/screens/Dashboard"));
 const AuthScreen = lazy(() => import("@/screens/Auth"));
 
 const Navigation = () => {
+  console.log("render navigation");
   return (
     <BrowserRouter>
       <Suspense fallback={<CircularProgress />}>

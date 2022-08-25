@@ -27,7 +27,7 @@ export const fetchAccessTokenFn = async (data: ILoginWithPassCode) => {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   };
-  const response = await postApi<string, ITokenResponse>(
+  const response = await httpRequest.post<string, ITokenResponse>(
     "/auth/realms/eventx/protocol/openid-connect/token",
     formData,
     options

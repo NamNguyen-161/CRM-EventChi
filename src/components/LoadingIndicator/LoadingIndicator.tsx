@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, CircularProgressProps } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 
@@ -13,12 +13,13 @@ const WrapperLoading = styled.div`
   z-index: 1;
 `;
 
-export interface ILoadingIndicatorProps {}
+export interface ILoadingIndicatorProps extends CircularProgressProps {}
 
 export default function LoadingIndicator(props: ILoadingIndicatorProps) {
+  const { ...circularProgressProps } = props;
   return (
     <WrapperLoading>
-      <CircularProgress size={100} />
+      <CircularProgress size={100} {...circularProgressProps} />
     </WrapperLoading>
   );
 }

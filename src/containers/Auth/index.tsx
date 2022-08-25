@@ -48,7 +48,6 @@ export default function AuthContainer(props: IAuthContainerProps) {
     },
     onError,
   });
-  console.log({ userId });
   const { mutate: loginWithPassCode, isLoading: passCodeLoading } = useMutation(
     (data: ILoginWithPassCode) => fetchAccessTokenFn(data),
     {

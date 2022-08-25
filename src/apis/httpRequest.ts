@@ -12,7 +12,7 @@ const httpRequest = axios.create({
 
 httpRequest.interceptors.request.use(
   function (config) {
-    requestHandler(config);
+    return requestHandler(config);
   },
   function (error) {
     return Promise.reject(error);
@@ -28,8 +28,8 @@ const requestHandler = (config: AxiosRequestConfig) => {
 };
 
 httpRequest.interceptors.response.use(
-  (response) => {
-    return response;
+  function (response) {
+    return response.data;
   },
   async function (error) {
     const originalRequest = error.config;

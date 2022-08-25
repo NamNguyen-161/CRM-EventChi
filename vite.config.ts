@@ -12,6 +12,11 @@ export default ({ mode }) => {
     },
     server: {
       port: +process.env.VITE_APP_PORT,
+      host: true,
+    },
+    preview: {
+      port: +process.env.VITE_APP_PREVIEW,
+      host: true,
     },
     resolve: {
       alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],

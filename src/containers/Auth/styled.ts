@@ -36,3 +36,12 @@ export const Description = styled.div`
   color: rgba(0, 0, 0, 0.6);
   opacity: 0.8;
 `;
+
+export const SignUpRole = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  position: fixed;
+  left: 40px;
+  bottom: 40px;
+`;

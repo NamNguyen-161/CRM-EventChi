@@ -1,8 +1,19 @@
-import { getApi, postApi } from "@/utils/apiHelper";
+import { apiOk } from "@/utils/apiHelper";
 import { makeFormData } from "@/utils/helper";
-import { getRefreshToken, storeToken } from "@/utils/localStorageService";
+import {
+  getRefreshToken,
+  storeToken,
+  storeUserInfo,
+} from "@/utils/localStorageService";
 import httpRequest from "../httpRequest";
-import { ILoginWithPassCode, ITokenResponse } from "./types";
+import {
+  ILoginWithPassCode,
+  IRole,
+  ITokenResponse,
+  IUserCompany,
+  IUserId,
+  IUserInfo,
+} from "./types";
 
 const baseApi = "accountmanager";
 
@@ -10,7 +21,7 @@ export const loginWithPhoneFn = async (phoneNumber: string) => {
   const response = await httpRequest.get<string>(
     `${baseApi}/accounts/phone/${phoneNumber}`
   );
-  return response;
+  return response.data;
 };
 
 export const fetchAccessTokenFn = async (data: ILoginWithPassCode) => {
@@ -27,12 +38,12 @@ export const fetchAccessTokenFn = async (data: ILoginWithPassCode) => {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   };
-  const response = await httpRequest.post<string, ITokenResponse>(
+  const response = await httpRequest.post<ITokenResponse>(
     "/auth/realms/eventx/protocol/openid-connect/token",
     formData,
     options
   );
-  return response;
+  return response.data;
 };
 
 export const refreshTokenFn = async () => {
@@ -50,11 +61,34 @@ export const refreshTokenFn = async () => {
       "Content-Type": "application/x-www-form-urlencoded",
     },
   };
-  const response = await postApi<string, ITokenResponse>(
+  const response = await httpRequest.post<ITokenResponse>(
     "/auth/realms/eventx/protocol/openid-connect/token",
     formData,
     options
   );
-  storeToken(response);
-  return response.access_token;
+  storeToken(response.data);
+  return response.data.access_token;
+};
+
+export const getListRolesDefaultFn = async () => {
+  const response = await httpRequest.get<IRole[]>(`${baseApi}/accounts/roles`);
+  return response.data;
+};
+
+export const getListRolesCompanyFn = async (data: IUserId) => {
+  const response = await httpRequest.post<IUserCompany[]>(
+    `${baseApi}/accounts/user-company`,
+    data
+  );
+  return response.data;
+};
+
+export const getUserInfoFn = async (userId: string) => {
+  const response = await httpRequest.get<IUserInfo>(
+    `${baseApi}/accounts/${userId}`
+  );
+  if (apiOk(response.data)) {
+    storeUserInfo(response.data);
+  }
+  return response.data;
 };

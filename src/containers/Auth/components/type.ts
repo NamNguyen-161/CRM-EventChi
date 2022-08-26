@@ -18,6 +18,11 @@ export interface ILoginOTP {
 
 export interface ILoginForm extends ILoginPhone, ILoginOTP {}
 
+export interface ListRoleRenderProps {
+  id: string;
+  name: string;
+}
+
 export const schemaLogin = Yup.object({
   country: Yup.object({
     name: Yup.string().required(),

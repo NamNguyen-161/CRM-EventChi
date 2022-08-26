@@ -29,7 +29,7 @@ const requestHandler = (config: AxiosRequestConfig) => {
 
 httpRequest.interceptors.response.use(
   function (response) {
-    return response.data;
+    return response;
   },
   async function (error) {
     const originalRequest = error.config;

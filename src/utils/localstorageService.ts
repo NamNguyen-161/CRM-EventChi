@@ -1,9 +1,12 @@
-import { ITokenResponse } from "@/apis/auth/types";
+import { ITokenResponse, IUserInfo } from "@/apis/auth/types";
 
 const accessTokenKey = "access_token";
 const refreshTokenKey = "refresh_token";
 const userIdKey = "user_id";
 const organizationIdKey = "organization_id";
+
+const tokenPriceKey = "token_price";
+const userInfoKey = "user_info";
 
 export function storeToken(token: ITokenResponse) {
   localStorage.setItem(accessTokenKey, token.access_token);
@@ -34,4 +37,8 @@ export function getUserId() {
 export function getOrganizationId() {
   return localStorage.getItem(organizationIdKey) || "";
   // return "GBCAEXSAZI2HU4IUAL6EH6SPHMVNQLKXOM3L63TQOKQGFCSMWPQM6DW7";
+}
+
+export function storeUserInfo(user: IUserInfo) {
+  localStorage.setItem(userInfoKey, JSON.stringify(user));
 }

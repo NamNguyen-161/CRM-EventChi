@@ -1,3 +1,9 @@
+@use "./color";
+
 .pointer {
   cursor: pointer;
+}
+
+.main_color {
+  color: color.$base-color;
 }

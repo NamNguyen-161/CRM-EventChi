@@ -1,9 +1,12 @@
 import { SpaceVertical } from "@/styles/styled";
 import React from "react";
 import FormRoleLogin from "../components/RoleForm";
-import { Description, TextLogin, WrapperAbsolute } from "../styled";
+import { Description, SignUpRole, TextLogin, WrapperAbsolute } from "../styled";
+import { IRoleState } from "../types";
 
-export interface IChooseRoleProps {}
+export interface IChooseRoleProps {
+  roles: IRoleState;
+}
 
 export default function ChooseRole(props: IChooseRoleProps) {
   return (
@@ -12,7 +15,10 @@ export default function ChooseRole(props: IChooseRoleProps) {
       <SpaceVertical height={56} />
       <Description>Choose role</Description>
       <SpaceVertical height={24} />
-      <FormRoleLogin />
+      <FormRoleLogin roles={props.roles} />
+      <SignUpRole className="main_color pointer">
+        Sign up for other roles
+      </SignUpRole>
     </WrapperAbsolute>
   );
 }

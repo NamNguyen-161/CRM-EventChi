@@ -10,6 +10,7 @@ import NavigationApp from "./routes";
 import GlobalStyle from "./styles/globalStyle";
 import theme from "./styles/ThemeProvider";
 import "./styles/app.scss";
+import { LoadingProvider } from "./contexts/loadingContext";
 
 function App() {
   const queryClient = new QueryClient();
@@ -19,10 +20,12 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={theme}>
-            <GlobalStyle />
-            <CssBaseline />
-            <ToastContainer />
-            <NavigationApp />
+            <LoadingProvider>
+              <GlobalStyle />
+              <CssBaseline />
+              <ToastContainer />
+              <NavigationApp />
+            </LoadingProvider>
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>

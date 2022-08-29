@@ -28,6 +28,8 @@ const Login = (props: IFormLoginPhoneProps) => {
     onLoginPhone();
   };
 
+  console.log("render FormLoginPhone");
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Wrapper>
@@ -96,7 +98,11 @@ const Login = (props: IFormLoginPhoneProps) => {
         name="remember"
         control={control}
         render={({ field: { value, onChange } }) => (
-          <CustomCheckbox checked={value} onChange={onChange} />
+          <CustomCheckbox
+            checked={value}
+            onChange={onChange}
+            label="Remember me"
+          />
         )}
       />
       <SpaceVertical height={27} />
@@ -107,5 +113,5 @@ const Login = (props: IFormLoginPhoneProps) => {
   );
 };
 
-const FormLogin = memo(Login);
-export default FormLogin;
+const FormLoginPhone = memo(Login);
+export default FormLoginPhone;

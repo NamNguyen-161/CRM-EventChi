@@ -23,6 +23,9 @@ export interface ILoginOTPProps {
 
 export default function OTPLogin(props: ILoginOTPProps) {
   const { onChangeStep, onLoginPassCode } = props;
+
+  console.log("render OTPLogin");
+
   return (
     <WrapperAbsolute>
       <img

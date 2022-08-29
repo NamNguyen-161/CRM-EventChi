@@ -9,16 +9,18 @@ const WrapperLoading = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(17, 17, 17, 0.3);
+  background-color: rgba(17, 17, 17, 0.25);
   z-index: 1;
 `;
 
-export interface ILoadingIndicatorProps extends CircularProgressProps {}
+export interface ILoadingIndicatorProps extends CircularProgressProps {
+  styleWrapper?: React.CSSProperties;
+}
 
 export default function LoadingIndicator(props: ILoadingIndicatorProps) {
-  const { ...circularProgressProps } = props;
+  const { styleWrapper, ...circularProgressProps } = props;
   return (
-    <WrapperLoading>
+    <WrapperLoading style={styleWrapper}>
       <CircularProgress size={100} {...circularProgressProps} />
     </WrapperLoading>
   );

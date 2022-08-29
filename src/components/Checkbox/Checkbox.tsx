@@ -18,15 +18,17 @@ const CustomFormLabel = styled(FormControlLabel)(({ theme }) => ({
   },
 }));
 
-export interface IPassCodeProps extends CheckboxProps {}
+export interface IPassCodeProps extends CheckboxProps {
+  label: string;
+}
 
 const CheckboxStyle = (props: IPassCodeProps) => {
-  const { ...checkboxProps } = props;
+  const { label, ...checkboxProps } = props;
   return (
     <CustomFormLabel
       value="end"
       control={<Checkbox color="primary" {...checkboxProps} />}
-      label="Remember me"
+      label={label}
     />
   );
 };

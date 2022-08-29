@@ -7,6 +7,7 @@ import {
   List,
   styled,
   Box,
+  Avatar,
 } from "@mui/material";
 import {
   ExpandLess,
@@ -16,6 +17,7 @@ import {
   Drafts,
   Send,
 } from "@mui/icons-material";
+import { Name } from "./styled";
 
 const lists = [
   {
@@ -54,43 +56,64 @@ const ItemText = styled(ListItemText)(
   `
 );
 
-const ListItemCustom = styled(ListItem)(
-  ({ theme }) => `
+const ListItemCustom = styled(ListItem)<{ focus: boolean }>(
+  ({ theme, focus }) => `
     color: #FFFFFF;
-    opacity: 0.6;
+    opacity: ${focus ? 1 : 0.6};
     padding:0;
 
-    &:focus {
-      opacity: 1;
-      border-width: 2px;
-      border-style: solid;
-      border-image: linear-gradient(90deg, #eeeeee 0%, #cccccc 40%, rgba(0, 0, 0, 0) 100%);
-      border-image-slice: 1;
-      border-image-width: 2px 0;
-      filter: drop-shadow(0px 0px 12px #EA5284);
-    }
+    // &:focus {
+    //   opacity: 1;
+    //   border-width: 2px;
+    //   border-style: solid;
+    //   border-image: linear-gradient(90deg, #eeeeee 0%, #cccccc 40%, rgba(0, 0, 0, 0) 100%);
+    //   border-image-slice: 1;
+    //   border-image-width: 2px 0;
+    //   filter: drop-shadow(0px 0px 12px #EA5284);
+    // }
   `
 );
 
 const SideBarLayout = () => {
   const [state, setState] = useState(new Map<string, boolean>());
+  const [focused, setFocused] = useState(new Map<string, boolean>());
 
-  const handleClick = (key: string) => () => {
+  const handleClickListItem = (key: string) => {
     const value = state.get(key);
     setState(
       (map) => new Map(map.set(key, value === undefined ? true : !value))
     );
+    handleFocusedItem(key);
   };
 
+  const handleFocusedItem = (key: string) => {
+    const value = focused.get(key);
+    if (!value) {
+      setFocused(new Map([[key, true]]));
+    }
+  };
+  console.log({ focused });
+
   return (
-    <Box p="0px 16px 8px 8px" width="100%">
+    <Box
+      p="0px 16px 8px 8px"
+      width="100%"
+      display="grid"
+      gridTemplateRows="110px 1fr 72px"
+      gap="16px"
+    >
       <img src="/union.png" />
-      <List component="nav" sx={{ pt: "40px" }}>
+      <List component="nav">
         {lists.map(({ key, label, icon: Icon, items }) => {
           const open = state.get(key) || false;
+          const focus = focused.get(key) || false;
           return (
             <div key={key}>
-              <ListItemCustom button={true as any} onClick={handleClick(key)}>
+              <ListItemCustom
+                button={true as any}
+                onClick={() => handleClickListItem(key)}
+                focus={focus}
+              >
                 <ListItemIcon>
                   <Icon />
                 </ListItemIcon>
@@ -102,8 +125,10 @@ const SideBarLayout = () => {
                   {items.map(
                     ({ key: childKey, label: childLabel, icon: ChildIcon }) => (
                       <ListItemCustom
+                        focus={focus}
                         key={childKey}
                         button={true as any}
+                        onClick={() => handleFocusedItem(key)}
                         sx={(theme) => ({
                           paddingLeft: theme.spacing(
                             2.5 * (childKey.split("/").length - 1)
@@ -123,6 +148,22 @@ const SideBarLayout = () => {
           );
         })}
       </List>
+      <Box
+        display="inline-flex"
+        gap="16px"
+        justifyItems="flex-start"
+        alignItems="center"
+      >
+        <Avatar
+          alt="Nick Van der Meij"
+          src="/static/images/avatar/1.jpg"
+          className="pointer"
+        />
+        <Box>
+          <Name name="username">john smith</Name>
+          <Name name="rolename">Event Organizer</Name>
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -1,17 +1,20 @@
 import React, { lazy, memo, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
 import { ROUTE_CONFIG } from "@/constants/routes";
 import ProtectedRoute from "./protected";
+import { lazyMinLoadTime } from "@/components/LazyLoadComponent/LazyLoadComponent";
+import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
 
-const HomeScreen = lazy(() => import("@/screens/Home"));
-const AuthScreen = lazy(() => import("@/screens/Auth"));
+const HomeScreen = lazyMinLoadTime(() => import("@/screens/Home"), 1000);
+const AuthScreen = lazyMinLoadTime(() => import("@/screens/Auth"), 1000);
 
 const Navigation = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<CircularProgress />}>
+      <Suspense
+        fallback={<LoadingIndicator styleWrapper={{ height: "100vh" }} />}
+      >
         <Routes>
           <Route path={ROUTE_CONFIG.DASHBOARD} element={<ProtectedRoute />}>
             <Route path={ROUTE_CONFIG.HOME} element={<HomeScreen />}>

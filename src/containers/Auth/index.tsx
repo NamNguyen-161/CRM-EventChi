@@ -1,28 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { EStepLogin, ILoginForm, schemaLogin } from "./components/type";
 import { Wrapper } from "./styled";
 import PhoneLogin from "./PhoneLogin/PhoneLogin";
 import { CSSTransition } from "react-transition-group";
 import "./styles.scss";
-import { DIRECTION, IRoleState } from "./types";
+import { DIRECTION } from "./types";
 import OTPLogin from "./OTPLogin/OtpLogin";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ChooseRole from "./Roles/chooseRole";
 import { useMutation } from "@tanstack/react-query";
-import {
-  fetchAccessTokenFn,
-  getListRolesCompanyFn,
-  getListRolesDefaultFn,
-  loginWithPhoneFn,
-} from "@/apis/auth/authApi";
+import { fetchAccessTokenFn, loginWithPhoneFn } from "@/apis/auth/authApi";
 import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
 import { ILoginWithPassCode, IUserId } from "@/apis/auth/types";
 import { onError } from "@/utils/apiHelper";
-import { ResponseType } from "@/utils/types";
-import { AxiosResponse } from "axios";
 import { storeToken, storeUserId } from "@/utils/localStorageService";
-import { toast } from "react-toastify";
+import { useLoading } from "@/hooks/useLoading";
 
 export interface IAuthContainerProps {}
 
@@ -36,19 +29,17 @@ export default function AuthContainer(props: IAuthContainerProps) {
       passCode: ["", "", "", ""],
     },
   });
-
+  const { loading } = useLoading();
   const [step, setStep] = useState<EStepLogin>(EStepLogin.PHONE_NUMBER);
   const [direction, setDirection] = useState<DIRECTION>("left");
-  const [roles, setRoles] = useState<IRoleState>({
-    roleDefault: [],
-    rolesCompany: [],
-  });
 
   const refLoginPhone = useRef(null);
   const refLoginOTP = useRef(null);
   const refLoginRole = useRef(null);
 
-  // API
+  console.log("render AuthContainer");
+
+  //todo: API
   const {
     mutate: loginWithPhone,
     isLoading: phoneLoading,
@@ -60,37 +51,22 @@ export default function AuthContainer(props: IAuthContainerProps) {
     },
     onError,
   });
-  const {
-    mutate: loginWithPassCode,
-    isLoading: passCodeLoading,
-    data: tokenResponse,
-  } = useMutation((data: ILoginWithPassCode) => fetchAccessTokenFn(data), {
-    onSuccess: (data) => {
-      storeToken(data);
-    },
-    onError,
-  });
-  const { mutateAsync: getListRolesDefault, isLoading: roleLoading } =
-    useMutation(() => getListRolesDefaultFn(), {
+  const { mutate: loginWithPassCode, isLoading: passCodeLoading } = useMutation(
+    (data: ILoginWithPassCode) => fetchAccessTokenFn(data),
+    {
+      onSuccess: (data) => {
+        storeToken(data);
+        onChangeStep(EStepLogin.ROLE, "left");
+      },
       onError,
-    });
-  const { mutateAsync: getListRolesCompany, isLoading: roleCompanyLoading } =
-    useMutation((data: IUserId) => getListRolesCompanyFn(data), {
-      onError,
-    });
-
-  // EFFECT
-  useEffect(() => {
-    if (tokenResponse) {
-      onGetRole();
     }
-  }, [tokenResponse]);
+  );
 
-  // HANDLE LOGIC
-  const onChangeStep = (step: EStepLogin, direction: DIRECTION) => {
+  //todo: HANDLE LOGIC
+  const onChangeStep = useCallback((step: EStepLogin, direction: DIRECTION) => {
     setStep(step);
     setDirection(direction);
-  };
+  }, []);
 
   const onLoginPhone = () => {
     const { passCode, ...rest } = methods.getValues();
@@ -111,27 +87,9 @@ export default function AuthContainer(props: IAuthContainerProps) {
     }
   };
 
-  const onGetRole = async () => {
-    if (userId) {
-      const promise1 = getListRolesCompany({ userId });
-      const promise2 = getListRolesDefault();
-      await Promise.all([promise1, promise2])
-        .then((res) => {
-          if (res[0].length && res[1].length) {
-            setRoles({ rolesCompany: res[0], roleDefault: res[1] });
-            onChangeStep(EStepLogin.ROLE, "left");
-          }
-        })
-        .catch((err) => toast.error(err.message));
-    }
-  };
-
   return (
     <Wrapper>
-      {(phoneLoading ||
-        passCodeLoading ||
-        roleLoading ||
-        roleCompanyLoading) && <LoadingIndicator />}
+      {(phoneLoading || passCodeLoading || loading) && <LoadingIndicator />}
       <FormProvider {...methods}>
         <CSSTransition
           nodeRef={refLoginPhone}
@@ -172,7 +130,7 @@ export default function AuthContainer(props: IAuthContainerProps) {
           unmountOnExit
         >
           <div ref={refLoginRole}>
-            <ChooseRole roles={roles} />
+            <ChooseRole />
           </div>
         </CSSTransition>
       </FormProvider>

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import OTPInput from "@/components/OTPInput";
 import { useFormContext, Controller } from "react-hook-form";
 import { ILoginOTP } from "./type";
@@ -21,6 +21,8 @@ const PassCodeOTP = (props: IPassCodeOTPProps) => {
     const value = otp.findIndex((item) => item.length === 0);
     return value === -1 && onLoginPassCode();
   };
+
+  console.log("render FormOTP");
 
   return (
     <Controller

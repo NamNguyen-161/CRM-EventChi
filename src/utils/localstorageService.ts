@@ -4,6 +4,7 @@ const accessTokenKey = "access_token";
 const refreshTokenKey = "refresh_token";
 const userIdKey = "user_id";
 const organizationIdKey = "organization_id";
+const authenticated = "isAuthenticated";
 
 const tokenPriceKey = "token_price";
 const userInfoKey = "user_info";
@@ -23,7 +24,6 @@ export function getRefreshToken() {
 
 export function storeUserId(userId: string) {
   localStorage.setItem(userIdKey, userId);
-  localStorage.setItem(organizationIdKey, userId);
 }
 
 export function setOrganizationId(userId: string) {
@@ -42,3 +42,13 @@ export function getOrganizationId() {
 export function storeUserInfo(user: IUserInfo) {
   localStorage.setItem(userInfoKey, JSON.stringify(user));
 }
+
+export function setAuthenticate(value: boolean) {
+  localStorage.setItem(authenticated, value.toString());
+}
+
+export function getAuthenticate() {
+  return localStorage.getItem(authenticated);
+}
+
+localStorage.setItem("isAuthenticated", "true");

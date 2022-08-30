@@ -14,7 +14,11 @@ import { fetchAccessTokenFn, loginWithPhoneFn } from "@/apis/auth/authApi";
 import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
 import { ILoginWithPassCode, IUserId } from "@/apis/auth/types";
 import { onError } from "@/utils/apiHelper";
-import { storeToken, storeUserId } from "@/utils/localStorageService";
+import {
+  setAuthenticate,
+  storeToken,
+  storeUserId,
+} from "@/utils/localStorageService";
 import { useLoading } from "@/hooks/useLoading";
 
 export interface IAuthContainerProps {}
@@ -46,6 +50,7 @@ export default function AuthContainer(props: IAuthContainerProps) {
     data: userId,
   } = useMutation((data: string) => loginWithPhoneFn(data), {
     onSuccess: (data) => {
+      setAuthenticate(false);
       storeUserId(data);
       onChangeStep(EStepLogin.OTP, "left");
     },

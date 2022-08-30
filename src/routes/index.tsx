@@ -17,9 +17,10 @@ const Navigation = () => {
       >
         <Routes>
           <Route path={ROUTE_CONFIG.DASHBOARD} element={<ProtectedRoute />}>
-            <Route path={ROUTE_CONFIG.HOME} element={<HomeScreen />}>
-              <Route index element={<HomeScreen />} />
-            </Route>
+            <Route
+              path={`${ROUTE_CONFIG.DASHBOARD}/*`}
+              element={<HomeScreen />}
+            />
           </Route>
           <Route path={ROUTE_CONFIG.LOGIN} element={<AuthScreen />} />
           <Route

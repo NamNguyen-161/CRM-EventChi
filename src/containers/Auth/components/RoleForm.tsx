@@ -7,7 +7,11 @@ import ButtonComponent from "@/components/Buttons/Button";
 import { ROUTE_CONFIG } from "@/constants/routes";
 import { useLoading } from "@/hooks/useLoading";
 import { SpaceVertical } from "@/styles/styled";
-import { getUserId } from "@/utils/localStorageService";
+import {
+  getUserId,
+  setAuthenticate,
+  setOrganizationId,
+} from "@/utils/localStorageService";
 import { MAX_HEIGHT_SELECT } from "@/utils/types";
 import {
   FormControl,
@@ -76,6 +80,13 @@ const FormRole = (props: IFormRoleProps) => {
     []
   );
 
+  const onLoginWithRole = () => {
+    const id = selectedRole.split("-")[0];
+    setOrganizationId(id);
+    setAuthenticate(true);
+    navigation(ROUTE_CONFIG.HOME);
+  };
+
   //todo: EFFECT
   useLayoutEffect(() => {
     console.log("useEffect");
@@ -119,7 +130,7 @@ const FormRole = (props: IFormRoleProps) => {
         </Select>
       </FormControl>
       <SpaceVertical height={24} />
-      <ButtonComponent fullWidth onClick={() => navigation(ROUTE_CONFIG.HOME)}>
+      <ButtonComponent fullWidth onClick={onLoginWithRole}>
         continue
       </ButtonComponent>
     </React.Fragment>

@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect, useLayoutEffect } from "react";
 import {
   Collapse,
   ListItemText,
@@ -9,34 +9,79 @@ import {
   Box,
   Avatar,
 } from "@mui/material";
-import {
-  ExpandLess,
-  ExpandMore,
-  StarBorder,
-  MoveToInbox,
-  Drafts,
-  Send,
-} from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Name } from "./styled";
+import { useQuery } from "@tanstack/react-query";
+import { onError } from "@/utils/apiHelper";
+import { getAllEventsFn } from "@/apis/event/eventApi";
+import IconHome from "@/images/IconHome";
+import IconOption from "@/images/IconOption";
+import IconEvent from "@/images/IconEvent";
+import { Event } from "@/apis/event/type";
+import { Link } from "react-router-dom";
+
+const PADDING_WHEN_LARGER = 2;
+
+const templateSideBarEvent = (data: Event) => {
+  const { name, _id } = data;
+  const event = {
+    key: `${_id}`,
+    label: `${name}`,
+    icon: (value: number) => <IconEvent opacity={value} />,
+    items: [
+      {
+        key: `${_id}/crew`,
+        label: "Crew",
+        items: [
+          { key: `${_id}/crew/teams`, label: "Teams" },
+          { key: `${_id}/crew/members`, label: "Members" },
+        ],
+      },
+      {
+        key: `${_id}/sale`,
+        label: "Sales",
+        items: [
+          { key: `${_id}/sale/menus`, label: "Menus" },
+          { key: `${_id}/sale/products`, label: "Products" },
+          { key: `${_id}/sale/token`, label: "Tokens" },
+        ],
+      },
+      {
+        key: `${_id}/tickets`,
+        label: "Tickets",
+      },
+    ],
+  };
+  return event;
+};
 
 const lists = [
   {
-    key: "inbox",
-    label: "Inbox",
-    icon: MoveToInbox,
+    key: "home",
+    label: "Home",
+    icon: (value: number) => <IconHome opacity={value} />,
+  },
+  {
+    key: "event",
+    label: "Event",
+    icon: (value: number) => <IconEvent opacity={value} />,
     items: [
       {
-        key: "starred/children",
-        label: "Starred",
-        icon: StarBorder,
+        key: "event/create",
+        label: "Create",
       },
     ],
   },
   {
-    key: "drafts",
-    label: "Drafts",
-    icon: Drafts,
-    items: [{ key: "send/children", label: "Sent Items", icon: Send }],
+    key: "option",
+    label: "Sub Option",
+    icon: (value: number) => <IconOption opacity={value} />,
+    items: [
+      { key: "option/crew", label: "Crew" },
+      { key: "option/events", label: "Events" },
+      { key: "option/pos", label: "Pos" },
+      { key: "option/products", label: "Products" },
+    ],
   },
 ];
 
@@ -56,28 +101,56 @@ const ItemText = styled(ListItemText)(
   `
 );
 
-const ListItemCustom = styled(ListItem)<{ focus: boolean }>(
-  ({ theme, focus }) => `
+const ListItemCustom = styled(ListItem)<{ focus: number; spacing: string }>(
+  ({ theme, focus, spacing }) => `
     color: #FFFFFF;
-    opacity: ${focus ? 1 : 0.6};
-    padding:0;
-
-    // &:focus {
-    //   opacity: 1;
-    //   border-width: 2px;
-    //   border-style: solid;
-    //   border-image: linear-gradient(90deg, #eeeeee 0%, #cccccc 40%, rgba(0, 0, 0, 0) 100%);
-    //   border-image-slice: 1;
-    //   border-image-width: 2px 0;
-    //   filter: drop-shadow(0px 0px 12px #EA5284);
-    // }
+    opacity: 0.6;
+    padding: 0;
+    padding-left: ${theme.spacing(
+      2.5 * (spacing.split("/").length - PADDING_WHEN_LARGER)
+    )};
+    ${
+      focus &&
+      `
+        opacity: 1;
+        border-width: 2px;
+        border-style: solid;
+        border-image: linear-gradient(90deg, #eeeeee 0%, #cccccc 40%, rgba(0, 0, 0, 0) 100%);
+        border-image-slice: 1;
+        border-image-width: 2px 0;
+        filter: drop-shadow(0px 0px 12px #EA5284);
+      `
+    }
   `
 );
 
 const SideBarLayout = () => {
   const [state, setState] = useState(new Map<string, boolean>());
   const [focused, setFocused] = useState(new Map<string, boolean>());
+  const [sidebar, setSidebar] = useState(lists);
 
+  //TODO: API
+  const { data, isLoading } = useQuery({
+    queryKey: ["list_event"],
+    queryFn: () => getAllEventsFn(),
+    onError,
+    staleTime: Infinity,
+  });
+
+  //todo EFFECT
+  useLayoutEffect(() => {
+    if (data?.docs) {
+      const listEvent = data?.docs.map((event) => templateSideBarEvent(event));
+      const firstElement = sidebar.shift();
+      const lastElement = sidebar.pop();
+      if (firstElement && lastElement) {
+        const newSideBar = [...[firstElement], ...listEvent, ...[lastElement]];
+        setSidebar(newSideBar);
+      }
+    }
+  }, [data?.docs]);
+
+  // TODO: HANDLE
   const handleClickListItem = (key: string) => {
     const value = state.get(key);
     setState(
@@ -87,12 +160,12 @@ const SideBarLayout = () => {
   };
 
   const handleFocusedItem = (key: string) => {
+    console.log({ key });
     const value = focused.get(key);
     if (!value) {
       setFocused(new Map([[key, true]]));
     }
   };
-  console.log({ focused });
 
   return (
     <Box
@@ -104,46 +177,98 @@ const SideBarLayout = () => {
     >
       <img src="/union.png" />
       <List component="nav">
-        {lists.map(({ key, label, icon: Icon, items }) => {
+        {sidebar.map(({ key, label, icon: Icon, items }) => {
           const open = state.get(key) || false;
-          const focus = focused.get(key) || false;
           return (
             <div key={key}>
-              <ListItemCustom
-                button={true as any}
-                onClick={() => handleClickListItem(key)}
-                focus={focus}
-              >
-                <ListItemIcon>
-                  <Icon />
-                </ListItemIcon>
-                <ItemText inset primary={label} />
-                {open ? <ExpandLess /> : <ExpandMore />}
-              </ListItemCustom>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {items.map(
-                    ({ key: childKey, label: childLabel, icon: ChildIcon }) => (
-                      <ListItemCustom
-                        focus={focus}
-                        key={childKey}
-                        button={true as any}
-                        onClick={() => handleFocusedItem(key)}
-                        sx={(theme) => ({
-                          paddingLeft: theme.spacing(
-                            2.5 * (childKey.split("/").length - 1)
-                          ),
-                        })}
-                      >
-                        <ListItemIcon>
-                          <ChildIcon />
-                        </ListItemIcon>
-                        <ItemText inset primary={childLabel} />
-                      </ListItemCustom>
-                    )
-                  )}
-                </List>
-              </Collapse>
+              <Link to={key}>
+                <ListItemCustom
+                  button={true as any}
+                  onClick={() => handleClickListItem(key)}
+                  focus={focused.get(key) ? 1 : 0}
+                  spacing={key}
+                >
+                  <ListItemIcon>{Icon(focused.get(key) ? 1 : 0)}</ListItemIcon>
+                  <ItemText inset primary={label} />
+                  {items ? open ? <ExpandLess /> : <ExpandMore /> : <></>}
+                </ListItemCustom>
+              </Link>
+              {items && (
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {items.map(
+                      ({
+                        key: childKey,
+                        label: childLabel,
+                        items: ItemChildren,
+                      }: any) => {
+                        const openChild = state.get(childKey) || false;
+                        return (
+                          <div key={childKey}>
+                            <Link to={childKey}>
+                              <ListItemCustom
+                                focus={focused.get(childKey) ? 1 : 0}
+                                key={childKey}
+                                spacing={childKey}
+                                button={true as any}
+                                onClick={() => handleClickListItem(childKey)}
+                              >
+                                <ListItemIcon></ListItemIcon>
+                                <ItemText inset primary={childLabel} />
+                                {ItemChildren ? (
+                                  openChild ? (
+                                    <ExpandLess />
+                                  ) : (
+                                    <ExpandMore />
+                                  )
+                                ) : (
+                                  <></>
+                                )}
+                              </ListItemCustom>
+                            </Link>
+                            {ItemChildren && (
+                              <Collapse
+                                in={openChild}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <List component="div" disablePadding>
+                                  {ItemChildren.map(
+                                    ({
+                                      key: childItemKey,
+                                      label: childItemLabel,
+                                    }: any) => (
+                                      <Link to={childItemKey}>
+                                        <ListItemCustom
+                                          spacing={childItemKey}
+                                          focus={
+                                            focused.get(childItemKey) ? 1 : 0
+                                          }
+                                          key={childItemKey}
+                                          button={true as any}
+                                          onClick={() =>
+                                            handleFocusedItem(childItemKey)
+                                          }
+                                        >
+                                          <ListItemIcon></ListItemIcon>
+                                          <ItemText
+                                            inset
+                                            primary={childItemLabel}
+                                          />
+                                        </ListItemCustom>
+                                      </Link>
+                                    )
+                                  )}
+                                </List>
+                              </Collapse>
+                            )}
+                          </div>
+                        );
+                      }
+                    )}
+                  </List>
+                </Collapse>
+              )}
             </div>
           );
         })}

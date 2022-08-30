@@ -1,3 +1,5 @@
+import { IPagination } from "@/utils/types";
+
 export interface Pageable<T> {
   searchInfo: T;
   limit: number;
@@ -49,3 +51,5 @@ export interface Event {
   crews: Array<string>;
   teams: Array<string>;
 }
+
+export interface IListEvent extends IPagination<Event> {}

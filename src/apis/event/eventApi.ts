@@ -1,6 +1,6 @@
 import { getOrganizationId } from "@/utils/localStorageService";
 import httpRequest from "../httpRequest";
-import { Event, Pageable, SearchEvent } from "./type";
+import { IListEvent, Pageable, SearchEvent } from "./type";
 
 const baseApi = "eventmanager";
 
@@ -18,7 +18,7 @@ export const getAllEventsFn = async (searchPage?: Pageable<SearchEvent>) => {
       ...searchPage.searchInfo,
     };
   }
-  const response = await httpRequest.post<Event>(
+  const response = await httpRequest.post<IListEvent>(
     `${baseApi}/events/search-events?page=${page}&limit=${limit}`,
     body
   );

@@ -23,9 +23,10 @@ export interface DataError {
 
 export const onError = (error: any) => {
   const msg =
-    (error as any).response.data.Error ||
-    (error as any).response.data.error ||
-    "Something wrong";
+    (error as any).response.data?.Error ||
+    (error as any).response.data?.error ||
+    error?.message ||
+    error("Something wrong");
   toast.error(msg, {
     position: "top-right",
   });

@@ -14,8 +14,6 @@ export interface IPhoneLoginProps {
 export default function PhoneLogin(props: IPhoneLoginProps) {
   const { onChangeStep, onLoginPhone } = props;
 
-  console.log("render PhoneLogin");
-
   return (
     <WrapperAbsolute>
       <Stack spacing={1}>

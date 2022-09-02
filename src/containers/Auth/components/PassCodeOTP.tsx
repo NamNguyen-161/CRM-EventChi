@@ -22,8 +22,6 @@ const PassCodeOTP = (props: IPassCodeOTPProps) => {
     return value === -1 && onLoginPassCode();
   };
 
-  console.log("render FormOTP");
-
   return (
     <Controller
       control={control}

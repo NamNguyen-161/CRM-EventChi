@@ -9,12 +9,12 @@ const ProtectedRoute: FC<IChildren> = ({ children }) => {
   const isAuthenticated = getAuthenticate();
   const [login, setLogin] = useState(isAuthenticated === "true" ? true : false);
 
-  useEffect(() => {
-    const isAuthenticated = getAuthenticate();
-    setLogin(isAuthenticated === "true" ? true : false);
-  }, [navigation]);
+  // useEffect(() => {
+  //   const isAuthenticated = getAuthenticate();
+  //   setLogin(isAuthenticated === "true" ? true : false);
+  // }, [navigation]);
 
-  return login ? (
+  return true ? (
     <>
       {children}
       <Outlet />

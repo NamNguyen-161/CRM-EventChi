@@ -28,8 +28,6 @@ const Login = (props: IFormLoginPhoneProps) => {
     onLoginPhone();
   };
 
-  console.log("render FormLoginPhone");
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Wrapper>

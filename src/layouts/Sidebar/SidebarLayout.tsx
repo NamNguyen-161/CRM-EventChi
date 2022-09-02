@@ -18,7 +18,10 @@ import IconHome from "@/images/IconHome";
 import IconOption from "@/images/IconOption";
 import IconEvent from "@/images/IconEvent";
 import { Event } from "@/apis/event/type";
-import { Link } from "react-router-dom";
+import { LinkRoute } from "@/styles/styled";
+import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
+import { useNavigate } from "react-router-dom";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const PADDING_WHEN_LARGER = 2;
 
@@ -135,11 +138,12 @@ const SideBarLayout = () => {
     queryFn: () => getAllEventsFn(),
     onError,
     staleTime: Infinity,
+    enabled: false,
   });
 
   //todo EFFECT
   useLayoutEffect(() => {
-    if (data?.docs) {
+    if (data?.docs?.length) {
       const listEvent = data?.docs.map((event) => templateSideBarEvent(event));
       const firstElement = sidebar.shift();
       const lastElement = sidebar.pop();
@@ -160,13 +164,13 @@ const SideBarLayout = () => {
   };
 
   const handleFocusedItem = (key: string) => {
-    console.log({ key });
     const value = focused.get(key);
     if (!value) {
       setFocused(new Map([[key, true]]));
     }
   };
 
+  // if (isLoading) return <LoadingIndicator />;
   return (
     <Box
       p="0px 16px 8px 8px"
@@ -181,19 +185,19 @@ const SideBarLayout = () => {
           const open = state.get(key) || false;
           return (
             <div key={key}>
-              <Link to={key}>
+              <LinkRoute to={key}>
                 <ListItemCustom
                   button={true as any}
                   onClick={() => handleClickListItem(key)}
                   focus={focused.get(key) ? 1 : 0}
                   spacing={key}
                 >
-                  <ListItemIcon>{Icon(focused.get(key) ? 1 : 0)}</ListItemIcon>
+                  <ListItemIcon>{Icon(0)}</ListItemIcon>
                   <ItemText inset primary={label} />
                   {items ? open ? <ExpandLess /> : <ExpandMore /> : <></>}
                 </ListItemCustom>
-              </Link>
-              {items && (
+              </LinkRoute>
+              {items && items.length > 0 && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {items.map(
@@ -205,7 +209,7 @@ const SideBarLayout = () => {
                         const openChild = state.get(childKey) || false;
                         return (
                           <div key={childKey}>
-                            <Link to={childKey}>
+                            <LinkRoute to={childKey}>
                               <ListItemCustom
                                 focus={focused.get(childKey) ? 1 : 0}
                                 key={childKey}
@@ -225,7 +229,7 @@ const SideBarLayout = () => {
                                   <></>
                                 )}
                               </ListItemCustom>
-                            </Link>
+                            </LinkRoute>
                             {ItemChildren && (
                               <Collapse
                                 in={openChild}
@@ -238,7 +242,7 @@ const SideBarLayout = () => {
                                       key: childItemKey,
                                       label: childItemLabel,
                                     }: any) => (
-                                      <Link to={childItemKey}>
+                                      <LinkRoute to={childItemKey}>
                                         <ListItemCustom
                                           spacing={childItemKey}
                                           focus={
@@ -256,7 +260,7 @@ const SideBarLayout = () => {
                                             primary={childItemLabel}
                                           />
                                         </ListItemCustom>
-                                      </Link>
+                                      </LinkRoute>
                                     )
                                   )}
                                 </List>
@@ -279,11 +283,7 @@ const SideBarLayout = () => {
         justifyItems="flex-start"
         alignItems="center"
       >
-        <Avatar
-          alt="Nick Van der Meij"
-          src="/static/images/avatar/1.jpg"
-          className="pointer"
-        />
+        <Avatar alt="Nick Van der Meij" className="pointer" />
         <Box>
           <Name name="username">john smith</Name>
           <Name name="rolename">Event Organizer</Name>

@@ -89,7 +89,6 @@ const FormRole = (props: IFormRoleProps) => {
 
   //todo: EFFECT
   useLayoutEffect(() => {
-    console.log("useEffect");
     if (result[0].isLoading || result[1].isLoading) {
       showLoading();
       return;

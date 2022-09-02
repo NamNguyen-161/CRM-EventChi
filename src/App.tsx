@@ -13,7 +13,13 @@ import "./styles/app.scss";
 import { LoadingProvider } from "./contexts/loadingContext";
 
 function App() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 1000,
+      },
+    },
+  });
 
   return (
     <Provider store={store}>

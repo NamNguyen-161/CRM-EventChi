@@ -41,8 +41,6 @@ export default function AuthContainer(props: IAuthContainerProps) {
   const refLoginOTP = useRef(null);
   const refLoginRole = useRef(null);
 
-  console.log("render AuthContainer");
-
   //todo: API
   const {
     mutate: loginWithPhone,
@@ -91,6 +89,8 @@ export default function AuthContainer(props: IAuthContainerProps) {
       loginWithPassCode(data);
     }
   };
+
+  console.log("render AUTH");
 
   return (
     <Wrapper>

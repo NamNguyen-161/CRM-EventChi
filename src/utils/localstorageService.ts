@@ -50,5 +50,3 @@ export function setAuthenticate(value: boolean) {
 export function getAuthenticate() {
   return localStorage.getItem(authenticated);
 }
-
-localStorage.setItem("isAuthenticated", "true");

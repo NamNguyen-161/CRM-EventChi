@@ -6,8 +6,6 @@ import { Description, SignUpRole, TextLogin, WrapperAbsolute } from "../styled";
 export interface IChooseRoleProps {}
 
 export default function ChooseRole(props: IChooseRoleProps) {
-  console.log("render ChooseRole");
-
   return (
     <WrapperAbsolute>
       <TextLogin>Hello Nick</TextLogin>

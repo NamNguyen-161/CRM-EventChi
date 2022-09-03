@@ -22,6 +22,5 @@ export const getAllEventsFn = async (searchPage?: Pageable<SearchEvent>) => {
     `${baseApi}/events/search-events?page=${page}&limit=${limit}`,
     body
   );
-  console.log({ response });
   return response.data;
 };

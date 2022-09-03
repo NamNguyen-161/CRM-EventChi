@@ -1,27 +1,13 @@
-import React, { lazy, memo, Suspense } from "react";
+import React, { memo, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { ROUTE_CONFIG } from "@/constants/routes";
 import ProtectedRoute from "./protected";
 import { lazyMinLoadTime } from "@/components/LazyLoadComponent/LazyLoadComponent";
-// import LoadingIndicator from "@/components/LoadingIndicator/Loading";
 import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
 
 const HomeScreen = lazyMinLoadTime(() => import("@/screens/Home"), 1000);
 const AuthScreen = lazyMinLoadTime(() => import("@/screens/Auth"), 1000);
-const LayoutContainer = lazyMinLoadTime(
-  () => import("@/layouts/LayoutContainer/LayoutContainer"),
-  1000
-);
-
-const EventDetailScreen = lazyMinLoadTime(
-  () => import("@/screens/EventDetail"),
-  1000
-);
-const HomeDetailScreen = lazyMinLoadTime(
-  () => import("@/screens/HomeDetail"),
-  1000
-);
 
 const Navigation = () => {
   return (

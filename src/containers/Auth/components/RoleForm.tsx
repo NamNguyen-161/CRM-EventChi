@@ -25,6 +25,8 @@ import React, { memo, useCallback, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ListRoleRenderProps } from "./type";
 import { onError } from "@/utils/apiHelper";
+import { useAppDispatch } from "@/hooks";
+import { setRole } from "@/store/Auth/auth.slice";
 
 export interface IFormRoleProps {}
 
@@ -36,6 +38,8 @@ const FormRole = (props: IFormRoleProps) => {
   >([]);
   const navigation = useNavigate();
   const { showLoading, hideLoading } = useLoading();
+
+  const dispatch = useAppDispatch();
 
   // todo API
   const result = useQueries({
@@ -81,10 +85,16 @@ const FormRole = (props: IFormRoleProps) => {
   );
 
   const onLoginWithRole = () => {
-    const id = selectedRole.split("-")[0];
-    setOrganizationId(id);
+    const organizationId = selectedRole.split("-")[0];
+    const roleId = selectedRole.split("-")[1];
+    setOrganizationId(organizationId);
     setAuthenticate(true);
     navigation(ROUTE_CONFIG.HOME);
+    const listRole = result[0].data;
+    if (listRole) {
+      const roleSelected = listRole.find((role) => role._id === roleId);
+      dispatch(setRole(roleSelected?.name as string));
+    }
   };
 
   //todo: EFFECT

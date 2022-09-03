@@ -25,7 +25,7 @@ export interface IButtonAuthScreenProps extends ButtonProps {
   textStyle?: React.CSSProperties;
 }
 
-const ButtonAuth = (props: IButtonAuthScreenProps) => {
+const ButtonCustom = (props: IButtonAuthScreenProps) => {
   const { action, children, btnStyle, textStyle, ...buttonProps } = props;
   return (
     <ButtonStyle variant="contained" style={btnStyle} {...buttonProps}>
@@ -34,5 +34,5 @@ const ButtonAuth = (props: IButtonAuthScreenProps) => {
   );
 };
 
-const ButtonComponent = memo(ButtonAuth);
+const ButtonComponent = memo(ButtonCustom);
 export default ButtonComponent;

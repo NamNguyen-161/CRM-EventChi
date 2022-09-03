@@ -14,79 +14,13 @@ import { Name } from "./styled";
 import { useQuery } from "@tanstack/react-query";
 import { onError } from "@/utils/apiHelper";
 import { getAllEventsFn } from "@/apis/event/eventApi";
-import IconHome from "@/images/IconHome";
-import IconOption from "@/images/IconOption";
-import IconEvent from "@/images/IconEvent";
-import { Event } from "@/apis/event/type";
 import { LinkRoute } from "@/styles/styled";
+import { createEvent, lists, templateSideBarEvent } from "./types";
 import LoadingIndicator from "@/components/LoadingIndicator/LoadingIndicator";
-import { useNavigate } from "react-router-dom";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { IUserInfo } from "@/apis/auth/types";
+import { useAppSelector } from "@/hooks";
 
 const PADDING_WHEN_LARGER = 2;
-
-const templateSideBarEvent = (data: Event) => {
-  const { name, _id } = data;
-  const event = {
-    key: `${_id}`,
-    label: `${name}`,
-    icon: (value: number) => <IconEvent opacity={value} />,
-    items: [
-      {
-        key: `${_id}/crew`,
-        label: "Crew",
-        items: [
-          { key: `${_id}/crew/teams`, label: "Teams" },
-          { key: `${_id}/crew/members`, label: "Members" },
-        ],
-      },
-      {
-        key: `${_id}/sale`,
-        label: "Sales",
-        items: [
-          { key: `${_id}/sale/menus`, label: "Menus" },
-          { key: `${_id}/sale/products`, label: "Products" },
-          { key: `${_id}/sale/token`, label: "Tokens" },
-        ],
-      },
-      {
-        key: `${_id}/tickets`,
-        label: "Tickets",
-      },
-    ],
-  };
-  return event;
-};
-
-const lists = [
-  {
-    key: "home",
-    label: "Home",
-    icon: (value: number) => <IconHome opacity={value} />,
-  },
-  {
-    key: "event",
-    label: "Event",
-    icon: (value: number) => <IconEvent opacity={value} />,
-    items: [
-      {
-        key: "event/create",
-        label: "Create",
-      },
-    ],
-  },
-  {
-    key: "option",
-    label: "Sub Option",
-    icon: (value: number) => <IconOption opacity={value} />,
-    items: [
-      { key: "option/crew", label: "Crew" },
-      { key: "option/events", label: "Events" },
-      { key: "option/pos", label: "Pos" },
-      { key: "option/products", label: "Products" },
-    ],
-  },
-];
 
 const ItemText = styled(ListItemText)(
   ({ theme }) => `
@@ -127,29 +61,46 @@ const ListItemCustom = styled(ListItem)<{ focus: number; spacing: string }>(
   `
 );
 
-const SideBarLayout = () => {
+interface Props {
+  userInfo: IUserInfo;
+}
+
+const SideBarLayout = (props: Props) => {
+  const { userInfo } = props;
+  const role = useAppSelector((state) => state.auth.role);
+
   const [state, setState] = useState(new Map<string, boolean>());
   const [focused, setFocused] = useState(new Map<string, boolean>());
   const [sidebar, setSidebar] = useState(lists);
 
   //TODO: API
-  const { data, isLoading } = useQuery({
-    queryKey: ["list_event"],
-    queryFn: () => getAllEventsFn(),
+  const { data, isLoading } = useQuery(["list_event"], () => getAllEventsFn(), {
     onError,
     staleTime: Infinity,
-    enabled: false,
   });
 
   //todo EFFECT
   useLayoutEffect(() => {
-    if (data?.docs?.length) {
+    if (data?.docs) {
       const listEvent = data?.docs.map((event) => templateSideBarEvent(event));
       const firstElement = sidebar.shift();
       const lastElement = sidebar.pop();
       if (firstElement && lastElement) {
-        const newSideBar = [...[firstElement], ...listEvent, ...[lastElement]];
-        setSidebar(newSideBar);
+        if (data.docs.length) {
+          const newSideBar = [
+            ...[firstElement],
+            ...listEvent,
+            ...[lastElement],
+          ];
+          setSidebar(newSideBar);
+        } else {
+          const newSideBar = [
+            ...[firstElement],
+            ...[createEvent],
+            ...[lastElement],
+          ];
+          setSidebar(newSideBar);
+        }
       }
     }
   }, [data?.docs]);
@@ -170,7 +121,8 @@ const SideBarLayout = () => {
     }
   };
 
-  // if (isLoading) return <LoadingIndicator />;
+  if (isLoading || !userInfo) return <LoadingIndicator />;
+
   return (
     <Box
       p="0px 16px 8px 8px"
@@ -192,7 +144,7 @@ const SideBarLayout = () => {
                   focus={focused.get(key) ? 1 : 0}
                   spacing={key}
                 >
-                  <ListItemIcon>{Icon(0)}</ListItemIcon>
+                  <ListItemIcon>{Icon(focused.get(key) ? 1 : 0)}</ListItemIcon>
                   <ItemText inset primary={label} />
                   {items ? open ? <ExpandLess /> : <ExpandMore /> : <></>}
                 </ListItemCustom>
@@ -242,7 +194,10 @@ const SideBarLayout = () => {
                                       key: childItemKey,
                                       label: childItemLabel,
                                     }: any) => (
-                                      <LinkRoute to={childItemKey}>
+                                      <LinkRoute
+                                        to={childItemKey}
+                                        key={childItemKey}
+                                      >
                                         <ListItemCustom
                                           spacing={childItemKey}
                                           focus={
@@ -283,10 +238,14 @@ const SideBarLayout = () => {
         justifyItems="flex-start"
         alignItems="center"
       >
-        <Avatar alt="Nick Van der Meij" className="pointer" />
+        <Avatar
+          alt={`${userInfo.firstName} ${userInfo.lastName}`}
+          src={userInfo.profileUrl}
+          className="pointer"
+        />
         <Box>
-          <Name name="username">john smith</Name>
-          <Name name="rolename">Event Organizer</Name>
+          <Name name="username">{`${userInfo.firstName} ${userInfo.lastName}`}</Name>
+          <Name name="rolename">{role}</Name>
         </Box>
       </Box>
     </Box>

@@ -90,8 +90,6 @@ export default function AuthContainer(props: IAuthContainerProps) {
     }
   };
 
-  console.log("render AUTH");
-
   return (
     <Wrapper>
       {(phoneLoading || passCodeLoading || loading) && <LoadingIndicator />}

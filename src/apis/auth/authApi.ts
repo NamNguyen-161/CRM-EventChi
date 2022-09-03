@@ -2,6 +2,7 @@ import { apiOk } from "@/utils/apiHelper";
 import { makeFormData } from "@/utils/helper";
 import {
   getRefreshToken,
+  getUserId,
   storeToken,
   storeUserInfo,
 } from "@/utils/localStorageService";
@@ -83,7 +84,8 @@ export const getListRolesCompanyFn = async (data: IUserId) => {
   return response.data;
 };
 
-export const getUserInfoFn = async (userId: string) => {
+export const getUserInfoFn = async () => {
+  const userId = getUserId();
   const response = await httpRequest.get<IUserInfo>(
     `${baseApi}/accounts/${userId}`
   );
